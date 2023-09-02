@@ -1197,6 +1197,7 @@ dependencies = [
  "dotenv_codegen",
  "header",
  "hex",
+ "indexmap 2.0.0",
  "reqwest",
  "rust_decimal",
  "serde",
@@ -1206,6 +1207,7 @@ dependencies = [
  "simperby-settlement",
  "tokio",
  "value",
+ "winnow",
 ]
 
 [[package]]

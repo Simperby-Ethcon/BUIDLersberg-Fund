@@ -35,7 +35,27 @@ impl Relayer {
 
         let commits: Vec<Value> = res.json().await?;
         if let Some(commit) = commits.first() {
-            return Ok(Some(commit.clone()));
+            // Extract the message from the commit
+            if let Some(message) = commit["commit"]["message"].as_str() {
+                // Check if the message has the prefix ">block:"
+                if message.starts_with(">block:") {
+                    // Skip the prefix to extract the remaining content
+                    let content = &message[">block:".len()..].trim_start_matches('\n');
+
+                    // Split the content into two parts: number and JSON
+                    let mut parts = content.splitn(2, '\n');
+                    if let (Some(number_str), Some(json_str)) = (parts.next(), parts.next()) {
+                        // Parse the number
+                        if let Ok(number) = number_str.trim().parse::<i32>() {
+
+                            // Parse the JSON content
+                            if let Ok(parsed_message) = serde_json::from_str::<Value>(json_str) {
+                                return Ok(Some(parsed_message));
+                            }
+                        }
+                    }
+                }
+            }
         }
         Ok(None)
     }
