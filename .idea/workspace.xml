@@ -8,41 +8,7 @@
     <cargoProject FILE="$PROJECT_DIR$/src/simperby-evm/client/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0a5cc9ff-4b4e-4a4c-9c7a-3733be64e37e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/client/.env.example" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/client/Cargo.toml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/client/src/lib.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/.env.example" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/.prettierignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/.prettierrc.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/ERC20Mock/ERC20Mock.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/ERC721Mock/ERC721Mock.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/Library/BytesLib.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/Library/Strings.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/Library/Utils.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/Library/Verify.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/Treasury/EVMTreasury.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/Treasury/interfaces/IEVMTreasury.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/foundry.toml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/hardhat.config.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/scripts/_01_deploy_mock.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/scripts/_01_deploy_treasury.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/scripts/misc/addresses.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/scripts/misc/constants.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/slither.config.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/test/foundry/EVMTreasury.t.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/test/foundry/utils/TestParameters.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/test/hardhat/EVMTreasury.test.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/evm-relayer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/evm-relayer.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lightclient.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lightclient.rs" afterDir="false" />
-    </list>
+    <list default="true" id="0a5cc9ff-4b4e-4a4c-9c7a-3733be64e37e" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -92,6 +58,7 @@
       <recent name="$PROJECT_DIR$/src/simperby-evm" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/lightclient" />
       <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$" />
     </key>

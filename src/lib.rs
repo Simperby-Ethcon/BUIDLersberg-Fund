@@ -10,6 +10,7 @@ use crate::util::string_to_hex;
 
 mod lightclient;
 mod util;
+mod relayer;
 
 pub struct LightClient {
     treasury_contract: MythereumTreasuryContract,

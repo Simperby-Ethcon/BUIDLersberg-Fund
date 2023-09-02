@@ -13,3 +13,7 @@ simperby-evm-client = { path = "src/simperby-evm/client" }
 tokio = { version = "1", features = ["full"] }
 dotenv_codegen = "0.15"
 simperby-settlement = { path = "./src/simperby-evm/settlement" }
+reqwest = "0.11.20"
+serde_json = "1.0.105"
+header = "0.1.1"
+value = "0.1.1"
