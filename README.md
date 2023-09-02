@@ -33,8 +33,8 @@ The protocol helps LP decision confidentiality with decentralized governance. Ke
 5. Actions, based on consensus, are carried out on the primary chains via our light clients and relayers.
 
 ### Supported Chains & DEX
-1. Polygon Testnet - Uniswap
-2. Linea Testnet - Native Uniswap
+1. Linea Testnet - ERC20Mock (Now available), ERC721Mock, Uniswap (Soon)
+2. Polygon Testnet - ERC20Mock, ERC721Mock, Uniswap (Soon)
 3. dYdX Testnet (further planned)
 
 ### Practical Use Case

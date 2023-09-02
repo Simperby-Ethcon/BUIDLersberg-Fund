@@ -68,6 +68,9 @@ pub struct ChainConfigs {
 pub enum ChainType {
     Ethereum(ChainConfigs),
     Goerli(ChainConfigs),
+    Polygon(ChainConfigs),
+    Linear(ChainConfigs),
+    Dydx(ChainConfigs),
     Other(ChainConfigs),
 }
 
@@ -76,6 +79,9 @@ impl ChainType {
         match self {
             ChainType::Ethereum(chain) => chain.rpc_url.as_str(),
             ChainType::Goerli(chain) => chain.rpc_url.as_str(),
+            ChainType::Polygon(chain) => chain.rpc_url.as_str(),
+            ChainType::Linear(chain) => chain.rpc_url.as_str(),
+            ChainType::Dydx(chain) => chain.rpc_url.as_str(),
             ChainType::Other(chain) => chain.rpc_url.as_str(),
         }
     }
@@ -84,6 +90,9 @@ impl ChainType {
         match self {
             ChainType::Ethereum(_) => "Ethereum",
             ChainType::Goerli(_) => "Goerli",
+            ChainType::Polygon(_) => "Polygon",
+            ChainType::Linear(_) => "Linear",
+            ChainType::Dydx(_) => "Dydx",
             ChainType::Other(configs) => {
                 if configs.chain_name.is_some() {
                     configs.chain_name.as_ref().unwrap().as_str()
@@ -325,12 +334,16 @@ impl SettlementChain for EvmCompatibleChain {
         let provider = Provider::<Http>::try_from(self.chain.get_rpc_url())?;
         let chain_id = provider.get_chainid().await.unwrap().as_u64();
         // let mnemonic = dotenv!("RELAYER_MNEMONIC");
-        let test_mnemonic: &str = "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
-        let wallet: LocalWallet = MnemonicBuilder::<English>::default()
-            .phrase(test_mnemonic)
-            .build()
-            .unwrap()
-            .with_chain_id(chain_id);
+        // let test_mnemonic: &str = "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
+        // let wallet: LocalWallet = MnemonicBuilder::<English>::default()
+        //     .phrase(test_mnemonic)
+        //     .build()
+        //     .unwrap()
+        //     .with_chain_id(chain_id);
+        let test_private_key_string = std::env::var("TEST_PRIVATE_KEY").expect("TEST_PRIVATE_KEY not set");
+        let test_private_key = test_private_key_string.as_str();
+        let wallet = test_private_key.parse::<LocalWallet>().unwrap().clone().with_chain_id(chain_id);
+
         let client = SignerMiddleware::new(&provider, wallet);
         let contract = ITreasury::new(treasury.address, Arc::new(client));
         let execution = convert_transaction_to_execution(&transaction).map_err(|_| {

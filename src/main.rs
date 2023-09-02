@@ -268,10 +268,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let header = extract_block_header(&files_changed)?;
                 println!("{:?}", header);
 
+                // TODO: enter network to operate in list formats from the handle_commit_body
                 let chain = if false {
-                    ChainType::Goerli(ChainConfigs {
-                        rpc_url: "https://ethereum-goerli-archive.allthatnode.com".to_string(),
-                        chain_name: Option::from("Goeril".to_string()),
+                    // ChainType::Goerli(ChainConfigs {
+                    //     rpc_url: "https://ethereum-goerli-archive.allthatnode.com".to_string(),
+                    //     chain_name: Option::from("Goeril".to_string()),
+                    // })
+                    ChainType::Linear(ChainConfigs{
+                        rpc_url: "https://linea-goerli.infura.io/v3/d2057beeb6a44e6482d534f058cad146".to_string(),
+                        chain_name: Option::from("Linear".to_string()),
                     })
                 } else {
                     ChainType::Other(ChainConfigs {
