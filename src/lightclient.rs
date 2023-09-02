@@ -11,13 +11,13 @@ pub use simperby_settlement::SettlementChain;
 
 
 pub struct LightClient {
-    treasury_contract: MythereumTreasuryContract,
+    treasury_contract: TreasuryContract,
     // global_context: GlobalContext,
 }
 
 impl LightClient {
     pub fn new(block_header: BlockHeader, chain_type: ChainType, evm_compatible_address: EvmCompatibleAddress) -> Result<Self, String> {
-        let treasury_contract = MythereumTreasuryContract::new(block_header, chain_type, Some(evm_compatible_address))?;
+        let treasury_contract = TreasuryContract::new(block_header.clone(), chain_type, Some(evm_compatible_address), block_header.height.clone())?;
 
         // let tether = TetherContract {
         //     balances: HashMap::new(),
@@ -182,18 +182,20 @@ pub struct TransferNonFungibleToken {
 //     pub caller: HexSerializedVec,
 // }
 
-pub struct MythereumTreasuryContract {
+pub struct TreasuryContract {
     light_client: light_client::LightClient,
     sequence: u128,
     evm_chain: EvmCompatibleChain,
+    block_height: BlockHeight,
 }
 
-impl MythereumTreasuryContract {
-    pub fn new(header: BlockHeader, chain: ChainType, treasury_address: Option<EvmCompatibleAddress>) -> Result<Self, String> {
+impl TreasuryContract {
+    pub fn new(header: BlockHeader, chain: ChainType, treasury_address: Option<EvmCompatibleAddress>, block_height: BlockHeight) -> Result<Self, String> {
         Ok(Self {
             light_client: light_client::LightClient::new(header),
             sequence: 0,
             evm_chain: EvmCompatibleChain { chain, treasury_address },
+            block_height,
         })
     }
 

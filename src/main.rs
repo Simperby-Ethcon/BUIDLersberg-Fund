@@ -33,6 +33,19 @@ impl From<serde_json::Error> for BlockHeaderError {
     }
 }
 
+impl Clone for BlockHeaderError {
+    fn clone(&self) -> Self {
+        match self {
+            BlockHeaderError::DecodeError(e) => BlockHeaderError::DecodeError(e.clone()),
+            BlockHeaderError::JsonError(_) => BlockHeaderError::JsonError(serde_json::from_str::<serde_json::Value>("").unwrap_err()),
+            BlockHeaderError::UnexpectedPublicKeyLength => BlockHeaderError::UnexpectedPublicKeyLength,
+            BlockHeaderError::UnexpectedHash256Length => BlockHeaderError::UnexpectedHash256Length,
+            BlockHeaderError::UnexpectedValidatorSetItemLength => BlockHeaderError::UnexpectedValidatorSetItemLength,
+            BlockHeaderError::ValueMismatch(e) => BlockHeaderError::ValueMismatch(e),
+        }
+    }
+}
+
 impl Error for BlockHeaderError {}
 
 impl fmt::Display for BlockHeaderError {
@@ -224,7 +237,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     address: "0x5FbDB2315678afecb367f032d93F642f64180aa3".to_string().parse().unwrap(),
                 });
 
-                relayer.initialize_light_client(header, chain, address)?;
+                relayer.set_block_height(header.clone().height);
+                relayer.initialize_light_client(header.clone(), chain, address, header.clone().height)?;
             },
             Ok(CommitMessageType::Transaction(transaction)) => {
                 println!("Transaction commit: {:#?}", transaction);

@@ -5,14 +5,16 @@ use simperby_core::{BlockHeader, BlockHeight, Diff, Transaction};
 use simperby_core::merkle_tree::MerkleProof;
 use tokio::time::sleep;
 use simperby_evm_client::{ChainType, EvmCompatibleAddress};
+use crate::extract_block_header;
 use crate::lightclient::*;
 
 // The relayer will manage a list of light clients.
 pub struct Relayer {
-    light_clients: Vec<MythereumTreasuryContract>,
+    light_clients: Vec<TreasuryContract>,
     client: reqwest::Client,
     token: String,
     url: String,
+    block_height: BlockHeight,
 }
 
 pub enum CommitMessageType {
@@ -28,7 +30,14 @@ impl Relayer {
             client: reqwest::Client::new(),
             token: token.to_string(),
             url: url.to_string(),
+            // if u64::MAX, then it means that the block_height has not been set up
+            block_height: u64::MAX,
         }
+    }
+
+    pub fn set_block_height(&mut self, block_height: BlockHeight) {
+        self.block_height = block_height;
+        println!("Relayer block height set to {}", block_height);
     }
 
     pub async fn poll_github(&self, only_latest: bool) -> Result<Vec<Value>, Box<dyn std::error::Error>> {
@@ -69,8 +78,8 @@ impl Relayer {
         Ok(CommitMessageType::Unknown)
     }
 
-    pub fn initialize_light_client(&mut self, header: BlockHeader, chain: ChainType, address: Option<EvmCompatibleAddress>) -> Result<(), String> {
-        let client = MythereumTreasuryContract::new(header, chain, address)?;
+    pub fn initialize_light_client(&mut self, header: BlockHeader, chain: ChainType, address: Option<EvmCompatibleAddress>, block_height: BlockHeight) -> Result<(), String> {
+        let client = TreasuryContract::new(header, chain, address, block_height.clone())?;
         self.light_clients.push(client);
         Ok(())
     }
@@ -92,7 +101,16 @@ impl Relayer {
                         println!("{}", commit);
                         match self.handle_commit_body(&commit).await {
                             Ok(CommitMessageType::Block(files_changed)) => {
-                                println!("The latest block commit: {:#?}", files_changed);
+                                match extract_block_header(&files_changed) {
+                                    Ok(header) => {
+                                        println!("{:?}", header);
+                                        self.set_block_height(header.height);
+                                    },
+                                    Err(e) => {
+                                        // Handle the error from extract_block_header
+                                        println!("Failed to extract block header: {}", e);
+                                    }
+                                }
                             },
                             Ok(CommitMessageType::Transaction(transaction)) => {
                                 println!("The latest transaction commit: {:#?}", transaction);
@@ -104,7 +122,7 @@ impl Relayer {
                                         body: transaction.to_string(),
                                         diff: Diff::None,
                                     },
-                                    transaction["height"].as_u64().unwrap() as BlockHeight,
+                                    self.block_height,
                                     // TODO: get_total_commits implementation
                                     MerkleProof{
                                         proof: vec![],
