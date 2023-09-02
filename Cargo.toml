@@ -9,3 +9,7 @@ edition = "2021"
 rust_decimal = "1.32.0"
 serde = "1.0.188"
 simperby-core = "0.2.0"
+simperby-evm-client = { path = "src/simperby-evm/client" }
+tokio = { version = "1", features = ["full"] }
+dotenv_codegen = "0.15"
+simperby-settlement = { path = "./src/simperby-evm/settlement" }

@@ -1,8 +1,10 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::io::Chain;
 use std::rc::Rc;
 use simperby_core::{BlockHeader, BlockHeight, FinalizationProof, HexSerializedVec, Transaction};
 use simperby_core::merkle_tree::MerkleProof;
+use simperby_evm_client::{ChainType, EvmCompatibleAddress};
 use crate::lightclient::{GlobalContext, MythereumTreasuryContract, TetherContract};
 use crate::util::string_to_hex;
 
@@ -15,8 +17,8 @@ pub struct LightClient {
 }
 
 impl LightClient {
-    pub fn new(block_header: BlockHeader) -> Result<Self, String> {
-        let treasury_contract = MythereumTreasuryContract::new(block_header)?;
+    pub fn new(block_header: BlockHeader, chain_type: ChainType, evm_compatible_address: EvmCompatibleAddress) -> Result<Self, String> {
+        let treasury_contract = MythereumTreasuryContract::new(block_header, chain_type, Some(evm_compatible_address))?;
 
         let tether = TetherContract {
             balances: HashMap::new(),
@@ -41,12 +43,12 @@ impl LightClient {
         self.treasury_contract.update_light_client(&mut self.global_context, header, proof)
     }
 
-    pub fn execute_transaction(
+    pub async fn execute_transaction(
         &mut self,
         execution_transaction: Transaction,
         simperby_height: BlockHeight,
         proof: MerkleProof,
     ) -> Result<(), String> {
-        self.treasury_contract.execute(&mut self.global_context, execution_transaction, simperby_height, proof)
+        self.treasury_contract.execute(&mut self.global_context, execution_transaction, simperby_height, proof).await
     }
 }

@@ -2,6 +2,7 @@
 //!
 //! This lightclient.rs is designed to use the settlement chain in the context of simperby-evm's code.
 
+
 // Imports
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -10,7 +11,10 @@ use simperby_core::{BlockHeader, BlockHeight, FinalizationProof, Hash256, HexSer
 use rust_decimal::Decimal;
 use simperby_core::merkle_tree::MerkleProof;
 use serde::{Deserialize, Serialize};
+use simperby_evm_client::{ChainType, EvmCompatibleAddress, EvmCompatibleChain};
 use crate::util::string_to_hex;
+use simperby_settlement::SettlementChain;
+
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct Execution {
@@ -145,14 +149,15 @@ pub struct GlobalContext {
 pub struct MythereumTreasuryContract {
     light_client: light_client::LightClient,
     sequence: u128,
+    evm_chain: EvmCompatibleChain,
 }
 
 impl MythereumTreasuryContract {
-    pub fn new(header: BlockHeader) -> Result<Self, String> {
-        let light_client = light_client::LightClient::new(header);
+    pub fn new(header: BlockHeader, chain: ChainType, treasury_address: Option<EvmCompatibleAddress>) -> Result<Self, String> {
         Ok(Self {
-            light_client,
+            light_client: light_client::LightClient::new(header),
             sequence: 0,
+            evm_chain: EvmCompatibleChain { chain, treasury_address },
         })
     }
 
@@ -165,7 +170,7 @@ impl MythereumTreasuryContract {
         self.light_client.update(header, proof)
     }
 
-    pub fn execute(
+    pub async fn execute(
         &mut self,
         context: &mut GlobalContext,
         execution_transaction: Transaction,
@@ -183,7 +188,7 @@ impl MythereumTreasuryContract {
         if !self.light_client.verify_transaction_commitment(
             &execution_transaction,
             simperby_height,
-            proof,
+            proof.clone(),
         ) {
             return Err("Invalid proof".to_string());
         }
@@ -197,15 +202,16 @@ impl MythereumTreasuryContract {
                                                         amount,
                                                         receiver_address,
                                                     }) => {
-                if token_address != string_to_hex("tether-address") {
-                    unimplemented!()
-                }
-                let tether_rc = Rc::clone(&context.tether);
-                let mut tether = tether_rc.borrow_mut();
-                context.caller = string_to_hex("treasury-address");
-                if !tether.transfer(context, &receiver_address, amount) {
-                    return Err("Insufficient balance".to_string());
-                }
+                // if token_address != string_to_hex("tether-address") {
+                //     unimplemented!()
+                // }
+                // let tether_rc = Rc::clone(&context.tether);
+                // let mut tether = tether_rc.borrow_mut();
+                // context.caller = string_to_hex("treasury-address");
+                // if !tether.transfer(context, &receiver_address, amount) {
+                //     return Err("Insufficient balance".to_string());
+                // }
+                self.evm_chain.execute(execution_transaction, simperby_height, proof.clone());
             }
             ExecutionMessage::TransferNonFungibleToken(_) => todo!(),
         }

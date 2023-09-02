@@ -1,1 +1,7 @@
 /target
+.DS_Store
+.idea/
+.vscode/
+src/.DS_Store
+src/simperby-evm/client/target
+src/simperby-evm/settlement/target
