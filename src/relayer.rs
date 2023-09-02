@@ -1,7 +1,7 @@
 use reqwest::header;
 use serde_json::Value;
 use std::time::Duration;
-use simperby_core::{BlockHeader, BlockHeight, Transaction};
+use simperby_core::{BlockHeader, BlockHeight, Diff, Transaction};
 use simperby_core::merkle_tree::MerkleProof;
 use tokio::time::sleep;
 use simperby_evm_client::{ChainType, EvmCompatibleAddress};
@@ -13,6 +13,12 @@ pub struct Relayer {
     client: reqwest::Client,
     token: String,
     url: String,
+}
+
+pub enum CommitMessageType {
+    Block(Value),
+    Transaction(Value),
+    Unknown,
 }
 
 impl Relayer {
@@ -41,26 +47,26 @@ impl Relayer {
         }
     }
 
-    pub async fn handle_commit_body(&self, commit: &Value) -> Result<Option<Value>, Box<dyn std::error::Error>> {
+    pub async fn handle_commit_body(&self, commit: &Value) -> Result<CommitMessageType, Box<dyn std::error::Error>> {
         if let Some(message) = commit["commit"]["message"].as_str() {
             if message.starts_with(">block:") {
                 let content = &message[">block:".len()..].trim_start_matches('\n');
-
-                // Split the content into two parts: number and JSON
                 let mut parts = content.splitn(2, '\n');
-                if let (Some(number_str), Some(json_str)) = (parts.next(), parts.next()) {
-                    // Parse the number
-                    if let Ok(number) = number_str.trim().parse::<i32>() {
-                        // Parse the JSON content
-                        if let Ok(parsed_message) = serde_json::from_str::<Value>(json_str) {
-                            return Ok(Some(parsed_message));
-                        }
+                if let (Some(_number_str), Some(json_str)) = (parts.next(), parts.next()) {
+                    if let Ok(parsed_message) = serde_json::from_str::<Value>(json_str) {
+                        return Ok(CommitMessageType::Block(parsed_message));
+                    }
+                }
+            } else if let Some(tx_type) = message.split(':').next() {
+                if tx_type.starts_with("ex-") {
+                    let json_str = message[tx_type.len()+1..].trim_start_matches('\n');
+                    if let Ok(parsed_message) = serde_json::from_str::<Value>(json_str) {
+                        return Ok(CommitMessageType::Transaction(parsed_message));
                     }
                 }
             }
         }
-
-        Ok(None)
+        Ok(CommitMessageType::Unknown)
     }
 
     pub fn initialize_light_client(&mut self, header: BlockHeader, chain: ChainType, address: Option<EvmCompatibleAddress>) -> Result<(), String> {
@@ -85,20 +91,30 @@ impl Relayer {
                     for commit in commits.iter() {
                         println!("{}", commit);
                         match self.handle_commit_body(&commit).await {
-                            Ok(Some(files_changed)) => {
-                                println!("Files changed in latest commit: {:#?}", files_changed);
-
-                                // Add your logic here to determine when to call execute.
-                                // If some condition, then:
-                                // let transaction = Transaction {...};
-                                // let height = BlockHeight {...};
-                                // let proof = MerkleProof {...};
-                                // let _ = self.execute(transaction, height, proof);
+                            Ok(CommitMessageType::Block(files_changed)) => {
+                                println!("The latest block commit: {:#?}", files_changed);
+                            },
+                            Ok(CommitMessageType::Transaction(transaction)) => {
+                                println!("The latest transaction commit: {:#?}", transaction);
+                                self.execute(
+                                    Transaction{
+                                        author: "".to_string(),
+                                        timestamp: 0,
+                                        head: "".to_string(),
+                                        body: transaction.to_string(),
+                                        diff: Diff::None,
+                                    },
+                                    transaction["height"].as_u64().unwrap() as BlockHeight,
+                                    // TODO: get_total_commits implementation
+                                    MerkleProof{
+                                        proof: vec![],
+                                    }
+                                ).await.unwrap()
                             },
                             Err(err) => {
                                 println!("Error while handling commit: {}", err);
                             }
-                            _ => {} // e.g. Ok(None) => no block found in commit
+                            _ => {} // e.g. CommitMessageType::Unknown => no recognizable commit prefix
                         }
                     }
                 },

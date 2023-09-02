@@ -9,6 +9,7 @@ use simperby_evm_client::{ChainConfigs, ChainType, EvmCompatibleAddress};
 
 use std::error::Error;
 use std::fmt;
+use crate::relayer::CommitMessageType;
 
 #[derive(Debug)]
 pub enum BlockHeaderError {
@@ -203,11 +204,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     if let Some(commit_data) = commit.first() {
         match relayer.handle_commit_body(commit_data).await {
-            Ok(Some(commit_msg_data)) => {
-                let header = extract_block_header(&commit_msg_data)?;
+            Ok(CommitMessageType::Block(files_changed)) => {
+                let header = extract_block_header(&files_changed)?;
                 println!("{:?}", header);
 
-                // Don't redeclare `chain`. Decide which chain you want based on some condition or choose one.
                 let chain = if false {
                     ChainType::Goerli(ChainConfigs {
                         rpc_url: "https://ethereum-goerli-archive.allthatnode.com".to_string(),
@@ -225,17 +225,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 });
 
                 relayer.initialize_light_client(header, chain, address)?;
-
-                relayer.run().await;
             },
-            Ok(None) => {
-                println!("No commit message data found.");
+            Ok(CommitMessageType::Transaction(transaction)) => {
+                println!("Transaction commit: {:#?}", transaction);
+                // may need to wait for next block commit
             },
-            Err(e) => {
-                println!("Error handling commit body: {}", e);
+            _ => {
+                println!("Unrecognized or unknown commit format.");
+                // may need to wait for next block commit
             }
         };
     }
+
+    relayer.run().await;
 
     Ok(())
 }
