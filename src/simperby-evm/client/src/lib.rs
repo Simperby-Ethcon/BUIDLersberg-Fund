@@ -60,9 +60,9 @@ abigen!(
 
 pub struct ChainConfigs {
     /// The RPC URL of the chain
-    rpc_url: String,
+    pub rpc_url: String,
     /// The name of the chain
-    chain_name: Option<String>,
+    pub chain_name: Option<String>,
 }
 
 pub enum ChainType {

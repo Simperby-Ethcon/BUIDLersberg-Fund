@@ -5,7 +5,7 @@ use serde_json::Value;
 use relayer::Relayer;
 use simperby_core::*;
 use lightclient::BlockHeader;
-use simperby_evm_client::ChainType;
+use simperby_evm_client::{ChainConfigs, ChainType, EvmCompatibleAddress};
 
 use std::error::Error;
 use std::fmt;
@@ -203,14 +203,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let header = extract_block_header(commit_data)?;
         println!("{:?}", header);
 
-        /*
-        let chain = ChainType::YourChainVariantHere; // Replace with your actual enum variant
-        let address = Some(EvmCompatibleAddress {}); // Use an actual address or your custom value
+        let chain = ChainType::Goerli(ChainConfigs{
+            rpc_url: "https://ethereum-goerli-archive.allthatnode.com".to_string(),
+            chain_name: Option::from("Goeril".to_string()),
+        });
+
+        let chain = ChainType::Other(ChainConfigs{
+            rpc_url: "http://127.0.0.1:8545".to_string(),
+            chain_name: Option::from("localhost".to_string()),
+        });
+
+        let address = Some(EvmCompatibleAddress {
+            address: "0x5FbDB2315678afecb367f032d93F642f64180aa3".to_string().parse().unwrap(),
+        });
 
         relayer.initialize_light_client(header, chain, address)?;
 
-        relayer.run().await?;
-        */
+        relayer.run().await;
     }
 
     Ok(())
