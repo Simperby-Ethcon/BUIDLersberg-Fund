@@ -9,62 +9,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0a5cc9ff-4b4e-4a4c-9c7a-3733be64e37e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitmodules" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/IERC20permit.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/Lock.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/TokenA.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/TokenB.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/UniswapV2ERC20.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/UniswapV2Factory.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/UniswapV2Migrator.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/UniswapV2Pair.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/UniswapV2Router01.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/UniswapV2Router02.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/getInit.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/interfaces/IERC20 copy.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/interfaces/IERC20.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/interfaces/IUniswapV2Callee.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/interfaces/IUniswapV2ERC20.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/interfaces/IUniswapV2Factory.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/interfaces/IUniswapV2Migrator.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/interfaces/IUniswapV2Pair.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/interfaces/IUniswapV2Router01.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/interfaces/IUniswapV2Router02.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/interfaces/IWETH.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/interfaces/V1/IUniswapV1Exchange.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/interfaces/V1/IUniswapV1Factory.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/lib/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/lib/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/lib/contracts/libraries/AddressStringUtil.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/lib/contracts/libraries/Babylonian.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/lib/contracts/libraries/BitMath.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/lib/contracts/libraries/SafeERC20Namer.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/lib/contracts/libraries/TransferHelper.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/lib/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/libraries/Math.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/libraries/SafeMath copy.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/libraries/SafeMath.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/libraries/UQ112x112.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/libraries/UniswapV2Library.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/libraries/UniswapV2OracleLibrary.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/taxableToken.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/tests/DeflatingERC20.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/tests/ERC20.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/tests/RouterEventEmitter.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/tests/WETH9.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/tests/factory.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/contracts/UniswapV2Mock/tests/txToken.sol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/lib/openzeppelin-contracts-05" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/lib/openzeppelin-contracts-06" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/lib/openzeppelin-contracts-08" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/scripts/_02_deploy_uniswap.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/test/hardhat/TestnetTest.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/test/hardhat/uniswapLocalTest.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/test/hardhat/uniswapV2MainnetFork.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/simperby-evm/contract/test/hardhat/verify-signature.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/simperby-evm/contract/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/simperby-evm/contract/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/simperby-evm/contract/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/simperby-evm/contract/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/relayer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/relayer.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,25 +42,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/Users/sigridjineth/Documents/github/evm-relayer/src/simperby-evm/contract/test/hardhat",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
-    "org.rust.disableDetachedFileInspection/Users/sigridjineth/Documents/github/evm-relayer/src/mod.rs": "true",
-    "ts.external.directory.path": "/Users/sigridjineth/Documents/github/evm-relayer/src/simperby-evm/contract/node_modules/typescript/lib"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/sigridjineth/Documents/github/evm-relayer/src/simperby-evm/contract/test/hardhat&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
+    &quot;org.rust.disableDetachedFileInspection/Users/sigridjineth/Documents/github/evm-relayer/src/mod.rs&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/sigridjineth/Documents/github/evm-relayer/src/simperby-evm/contract/node_modules/typescript/lib&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/simperby-evm/contract/test/hardhat" />
@@ -125,6 +74,30 @@
       <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Run evm-relayer" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="run --package evm-relayer --bin evm-relayer" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="emulateTerminal" value="false" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Cargo.Run evm-relayer" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="RustProjectSettings">
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />

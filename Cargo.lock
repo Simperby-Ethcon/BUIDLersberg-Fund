@@ -1196,6 +1196,7 @@ version = "0.1.0"
 dependencies = [
  "dotenv_codegen",
  "header",
+ "hex",
  "reqwest",
  "rust_decimal",
  "serde",

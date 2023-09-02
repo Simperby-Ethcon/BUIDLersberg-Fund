@@ -33,8 +33,6 @@ impl Relayer {
             .send()
             .await?;
 
-        println!("{:#?}", res.status());
-
         let commits: Vec<Value> = res.json().await?;
         if let Some(commit) = commits.first() {
             return Ok(Some(commit.clone()));
@@ -88,6 +86,7 @@ impl Relayer {
         loop {
             match self.poll_github().await {
                 Ok(Some(commit)) => {
+                    println!("{}", commit);
                     self.handle_commit(&commit).await;
                     // Add your logic here to determine when to call execute.
                     // If some condition, then:
