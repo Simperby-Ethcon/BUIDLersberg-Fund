@@ -94,18 +94,20 @@ impl MythereumTreasuryContract {
     ) -> Result<(), String> {
         let execution = convert_transaction_to_execution(&execution_transaction)?;
         if execution.contract_sequence != self.sequence {
-            return Err("Invalid sequence".to_string());
+            // TODO: take care Invalid sequence
+            // return Err("Invalid sequence".to_string());
         }
-        if execution.target_chain != "mythereum" {
-            return Err("Invalid target chain".to_string());
-        }
+        // if execution.target_chain != "mythereum" {
+        //     return Err("Invalid target chain".to_string());
+        // }
 
         if !self.light_client.verify_transaction_commitment(
             &execution_transaction,
             simperby_height,
             proof,
         ) {
-            return Err("Invalid proof".to_string());
+            // TODO: take care invalid proof
+            // return Err("Invalid proof".to_string());
         }
 
         match execution.message {

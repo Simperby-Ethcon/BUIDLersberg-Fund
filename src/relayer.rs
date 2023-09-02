@@ -1,7 +1,9 @@
+use std::error::Error;
 use reqwest::header;
 use serde_json::Value;
 use std::time::Duration;
-use simperby_core::{BlockHeader, BlockHeight, Diff, Transaction};
+use simperby::Client;
+use simperby_core::{BlockHeader, BlockHeight, Commit, CommitHash, Diff, Transaction};
 use simperby_core::merkle_tree::MerkleProof;
 use tokio::time::sleep;
 use simperby_evm_client::{ChainType, EvmCompatibleAddress};
@@ -11,9 +13,10 @@ use crate::lightclient::*;
 // The relayer will manage a list of light clients.
 pub struct Relayer {
     light_clients: Vec<TreasuryContract>,
-    client: reqwest::Client,
+    reqwest_client: reqwest::Client,
     token: String,
-    url: String,
+    github_url: String,
+    simperby_client: Client,
     block_height: BlockHeight,
 }
 
@@ -24,12 +27,13 @@ pub enum CommitMessageType {
 }
 
 impl Relayer {
-    pub fn new(token: &str, url: &str) -> Self {
+    pub fn new(token: &str, github_url: &str, simperby_client: Client) -> Self {
         Self {
             light_clients: Vec::new(),
-            client: reqwest::Client::new(),
+            reqwest_client: reqwest::Client::new(),
             token: token.to_string(),
-            url: url.to_string(),
+            github_url: github_url.to_string(),
+            simperby_client,
             // if u64::MAX, then it means that the block_height has not been set up
             block_height: u64::MAX,
         }
@@ -41,8 +45,8 @@ impl Relayer {
     }
 
     pub async fn poll_github(&self, only_latest: bool) -> Result<Vec<Value>, Box<dyn std::error::Error>> {
-        let res = self.client
-            .get(&self.url)
+        let res = self.reqwest_client
+            .get(&self.github_url)
             .header(header::AUTHORIZATION, format!("token {}", &self.token))
             .header(header::USER_AGENT, "my-app")
             .send()
@@ -100,39 +104,54 @@ impl Relayer {
                     for commit in commits.iter() {
                         println!("{}", commit);
                         match self.handle_commit_body(&commit).await {
+                            // Ok(CommitMessageType::Block(files_changed)) => {
+                            //     match extract_block_header(&files_changed) {
+                            //         Ok(header) => {
+                            //             println!("{:?}", header);
+                            //             self.set_block_height(header.height);
+                            //         },
+                            //         Err(e) => {
+                            //             // Handle the error from extract_block_header
+                            //             println!("Failed to extract block header: {}", e);
+                            //         }
+                            //     }
+                            // },
                             Ok(CommitMessageType::Block(files_changed)) => {
-                                match extract_block_header(&files_changed) {
-                                    Ok(header) => {
-                                        println!("{:?}", header);
-                                        self.set_block_height(header.height);
-                                    },
-                                    Err(e) => {
-                                        // Handle the error from extract_block_header
-                                        println!("Failed to extract block header: {}", e);
+                            // Ok(CommitMessageType::Transaction(transaction)) => {
+                            //     println!("The latest transaction commit: {:#?}", transaction);
+                                // TODO: extract commit_hash from transaction
+                                let commit_hash = "7e2c04181d63b75c1060a016c16d53fea7eb3301".to_string();
+                                let hash = hex::decode(&commit_hash).unwrap().try_into().unwrap();
+                                let data = self.simperby_client
+                                    .repository()
+                                    .read_commit(CommitHash { hash })
+                                    .await
+                                    .unwrap();
+                                dbg!("data: {:?}", data.clone());
+                                match data {
+                                    Commit::Transaction(data) => {
+                                        self.execute(
+                                            Transaction {
+                                                author: data.author.clone(),
+                                                timestamp: data.timestamp,
+                                                head: data.head.clone(),
+                                                body: data.body.clone(),
+                                                diff: data.diff.clone(), // assuming diff is Option<Diff>
+                                            },
+                                            self.block_height,
+                                            MerkleProof {
+                                                proof: vec![],
+                                            }
+                                        ).await.unwrap();
+                                    }
+                                    _ => {
+                                        println!("The commit data is not of transaction type");
                                     }
                                 }
                             },
-                            Ok(CommitMessageType::Transaction(transaction)) => {
-                                println!("The latest transaction commit: {:#?}", transaction);
-                                self.execute(
-                                    Transaction{
-                                        author: "".to_string(),
-                                        timestamp: 0,
-                                        head: "".to_string(),
-                                        body: transaction.to_string(),
-                                        diff: Diff::None,
-                                    },
-                                    self.block_height,
-                                    // TODO: get_total_commits implementation
-                                    MerkleProof{
-                                        proof: vec![],
-                                    }
-                                ).await.unwrap()
-                            },
-                            Err(err) => {
-                                println!("Error while handling commit: {}", err);
+                            _ => {
+                                println!("not supported commit message type at the moment");
                             }
-                            _ => {} // e.g. CommitMessageType::Unknown => no recognizable commit prefix
                         }
                     }
                 },

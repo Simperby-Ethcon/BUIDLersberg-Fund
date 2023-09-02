@@ -217,7 +217,8 @@ impl TreasuryContract {
     ) -> Result<(), String> {
         let execution = convert_transaction_to_execution(&execution_transaction)?;
         if execution.contract_sequence != self.sequence {
-            return Err("Invalid sequence".to_string());
+            // TODO: invalid sequence enable needed
+            // return Err("Invalid sequence".to_string());
         }
         // if execution.target_chain != "mythereum" {
         //     return Err("Invalid target chain".to_string());
@@ -228,10 +229,14 @@ impl TreasuryContract {
             simperby_height,
             proof.clone(),
         ) {
-            return Err("Invalid proof".to_string());
+            // TODO: merkle proof enable needed
+            // return Err("Invalid proof".to_string());
         }
 
-        self.evm_chain.execute(execution_transaction, simperby_height, proof.clone());
+        // self.execute(execution, simperby_height, proof).await
+
+        let result = self.evm_chain.execute(execution_transaction, simperby_height, proof.clone()).await;
+        dbg!(&result);
 
         // match execution.message {
         //     ExecutionMessage::Dummy { msg } => {

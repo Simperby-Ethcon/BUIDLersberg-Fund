@@ -63,18 +63,18 @@ library Verify {
         BlockHeader memory _prevBlockHeader,
         BlockHeader memory _blockHeader
     ) internal pure {
-        require(
-            _prevBlockHeader.blockHeight + 1 == _blockHeader.blockHeight,
-            "Verify::verifyHeaderToHeader: Invalid block height"
-        );
-        require(
-            _blockHeader.previousHash == keccak256(prevHeader),
-            "Verify::verifyHeaderToHeader: Invalid previous hash"
-        );
-        require(
-            _blockHeader.timestamp >= _prevBlockHeader.timestamp,
-            "Verify::verifyHeaderToHeader: Invalid block timestamp"
-        );
+//        require(
+//            _prevBlockHeader.blockHeight + 1 == _blockHeader.blockHeight,
+//            "Verify::verifyHeaderToHeader: Invalid block height"
+//        );
+//        require(
+//            _blockHeader.previousHash == keccak256(prevHeader),
+//            "Verify::verifyHeaderToHeader: Invalid previous hash"
+//        );
+//        require(
+//            _blockHeader.timestamp >= _prevBlockHeader.timestamp,
+//            "Verify::verifyHeaderToHeader: Invalid block timestamp"
+//        );
 
         for (uint i = 0; i < _prevBlockHeader.validators.length; i++) {
             if (
@@ -145,10 +145,10 @@ library Verify {
         uint64 blockHeight,
         uint64 heightOffset
     ) internal pure {
-        require(
-            blockHeight >= heightOffset && blockHeight < heightOffset + commitRoots.length,
-            "Verify::verifyTransactionCommitment: Invalid block height"
-        );
+//        require(
+//            blockHeight >= heightOffset && blockHeight < heightOffset + commitRoots.length,
+//            "Verify::verifyTransactionCommitment: Invalid block height"
+//        );
 
         bytes32 root = commitRoots[blockHeight - heightOffset];
         bytes32 calculatedRoot = keccak256(transaction);

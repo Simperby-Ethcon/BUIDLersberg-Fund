@@ -1,5 +1,8 @@
 mod lightclient;
 mod relayer;
+mod util;
+
+use simperby::types::{Auth, Config};
 
 use serde_json::Value;
 use relayer::Relayer;
@@ -9,7 +12,9 @@ use simperby_evm_client::{ChainConfigs, ChainType, EvmCompatibleAddress};
 
 use std::error::Error;
 use std::fmt;
+use reqwest::Client;
 use crate::relayer::CommitMessageType;
+use crate::util::read_config;
 
 #[derive(Debug)]
 pub enum BlockHeaderError {
@@ -207,15 +212,20 @@ fn extract_block_header(commit_data: &Value) -> Result<BlockHeader, BlockHeaderE
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Fetch the GitHub token from environment variables for security reasons
     let token = std::env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN not set");
-    let url = "https://api.github.com/repos/Simperby-Ethcon/dev-chain/commits";
+    let github = "https://api.github.com/repos/Simperby-Ethcon/dev-chain/commits";
+    let git_local_path = "/Users/sigridjineth/Documents/simperby-miscs";
+    let auth: Auth = read_config(&format!("{git_local_path}/.simperby/auth.json"))
+        .await
+        .unwrap();
+    let simperby_client = simperby::Client::open(git_local_path, Config {}, auth.clone()).await.unwrap();
 
-    let mut relayer = Relayer::new(&token, &url);
+    let mut relayer = Relayer::new(&token, &github, simperby_client);
 
     // Get initial data from GitHub
-    let commit = relayer.poll_github(true).await?;
-    println!("{:#?}", commit);
+    let commits = relayer.poll_github(true).await?;
+    println!("{:#?}", commits);
 
-    if let Some(commit_data) = commit.first() {
+    for commit_data in commits.iter() {
         match relayer.handle_commit_body(commit_data).await {
             Ok(CommitMessageType::Block(files_changed)) => {
                 let header = extract_block_header(&files_changed)?;
@@ -234,19 +244,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 };
 
                 let address = Some(EvmCompatibleAddress {
+                    // TODO: fix the hardcoded contract address
                     address: "0x5FbDB2315678afecb367f032d93F642f64180aa3".to_string().parse().unwrap(),
                 });
 
                 relayer.set_block_height(header.clone().height);
                 relayer.initialize_light_client(header.clone(), chain, address, header.clone().height)?;
+
+                break;  // Exit the loop once the block commit is found and processed.
             },
             Ok(CommitMessageType::Transaction(transaction)) => {
                 println!("Transaction commit: {:#?}", transaction);
-                // may need to wait for next block commit
+                // Note: Continue the loop to look for the block commit.
             },
             _ => {
                 println!("Unrecognized or unknown commit format.");
-                // may need to wait for next block commit
+                // Note: Continue the loop to look for the block commit.
             }
         };
     }

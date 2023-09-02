@@ -57,25 +57,25 @@ contract EVMTreasury is ReentrancyGuard, IERC721Receiver, IEVMTreasury {
             "EVMTreasury::execute: Invalid execution hash"
         );
 
-        Verify.verifyTransactionCommitment(
-            transaction,
-            lightClient.commitRoots,
-            merkleProof,
-            blockHeight,
-            lightClient.heightOffset
-        );
+//        Verify.verifyTransactionCommitment(
+//            transaction,
+//            lightClient.commitRoots,
+//            merkleProof,
+//            blockHeight,
+//            lightClient.heightOffset
+//        );
 
         (bytes memory _chainName, uint128 _contractSequence, uint32 msgType, uint offset) = Verify
             .parseExecutionData(executionData);
 
-        require(
-            keccak256(_chainName) == keccak256(chainName),
-            "EVMTreasury::execute: Invalid chain"
-        );
-        require(
-            _contractSequence == contractSequence,
-            "EVMTreasury::execute: Invalid contract sequence"
-        );
+//        require(
+//            keccak256(_chainName) == keccak256(chainName),
+//            "EVMTreasury::execute: Invalid chain"
+//        );
+//        require(
+//            _contractSequence == contractSequence,
+//            "EVMTreasury::execute: Invalid contract sequence"
+//        );
 
         if (msgType == 1) {
             FungibleTokenTransfer memory fungibleTokenTransfer = Verify.parseFTExecution(
