@@ -48,7 +48,8 @@ impl fmt::Display for BlockHeaderError {
 }
 
 
-fn extract_block_header(commit_data: Value) -> Result<BlockHeader, BlockHeaderError> {
+fn extract_block_header(commit_data: &Value) -> Result<BlockHeader, BlockHeaderError> {
+    println!("commit_data: {:?}", commit_data);
     // Initialize author with a default value
     let mut author = PublicKey::zero();
     let mut finalization_proof: Option<FinalizationProof> = None;
@@ -190,36 +191,50 @@ fn extract_block_header(commit_data: Value) -> Result<BlockHeader, BlockHeaderEr
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let token = "";
+    // Fetch the GitHub token from environment variables for security reasons
+    let token = std::env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN not set");
     let url = "https://api.github.com/repos/Simperby-Ethcon/dev-chain/commits";
 
-    let mut relayer = Relayer::new(token, url);
+    let mut relayer = Relayer::new(&token, &url);
 
     // Get initial data from GitHub
-    let commit = relayer.poll_github().await?;
-    // println!("{:#?}", commit);
+    let commit = relayer.poll_github(true).await?;
+    println!("{:#?}", commit);
 
-    if let Some(commit_data) = commit {
-        let header = extract_block_header(commit_data)?;
-        println!("{:?}", header);
+    if let Some(commit_data) = commit.first() {
+        match relayer.handle_commit_body(commit_data).await {
+            Ok(Some(commit_msg_data)) => {
+                let header = extract_block_header(&commit_msg_data)?;
+                println!("{:?}", header);
 
-        let chain = ChainType::Goerli(ChainConfigs{
-            rpc_url: "https://ethereum-goerli-archive.allthatnode.com".to_string(),
-            chain_name: Option::from("Goeril".to_string()),
-        });
+                // Don't redeclare `chain`. Decide which chain you want based on some condition or choose one.
+                let chain = if false {
+                    ChainType::Goerli(ChainConfigs {
+                        rpc_url: "https://ethereum-goerli-archive.allthatnode.com".to_string(),
+                        chain_name: Option::from("Goeril".to_string()),
+                    })
+                } else {
+                    ChainType::Other(ChainConfigs {
+                        rpc_url: "http://127.0.0.1:8545".to_string(),
+                        chain_name: Option::from("localhost".to_string()),
+                    })
+                };
 
-        let chain = ChainType::Other(ChainConfigs{
-            rpc_url: "http://127.0.0.1:8545".to_string(),
-            chain_name: Option::from("localhost".to_string()),
-        });
+                let address = Some(EvmCompatibleAddress {
+                    address: "0x5FbDB2315678afecb367f032d93F642f64180aa3".to_string().parse().unwrap(),
+                });
 
-        let address = Some(EvmCompatibleAddress {
-            address: "0x5FbDB2315678afecb367f032d93F642f64180aa3".to_string().parse().unwrap(),
-        });
+                relayer.initialize_light_client(header, chain, address)?;
 
-        relayer.initialize_light_client(header, chain, address)?;
-
-        relayer.run().await;
+                relayer.run().await;
+            },
+            Ok(None) => {
+                println!("No commit message data found.");
+            },
+            Err(e) => {
+                println!("Error handling commit body: {}", e);
+            }
+        };
     }
 
     Ok(())
