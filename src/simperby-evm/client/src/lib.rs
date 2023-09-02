@@ -51,6 +51,13 @@ abigen!(
     ]"#,
 );
 
+abigen!(
+    UniswapV2,
+    r#"[
+
+    ]"#,
+);
+
 pub struct ChainConfigs {
     /// The RPC URL of the chain
     rpc_url: String,

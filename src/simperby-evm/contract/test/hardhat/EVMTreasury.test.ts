@@ -1,7 +1,7 @@
 import { time, loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
-import { ethers, web3, waffle } from "hardhat";
+// import { ethers, web3, waffle } from "hardhat";
 import { Bytes } from "ethers";
 import {
   initialHeader,
@@ -11,6 +11,7 @@ import {
   merkleProof,
   execution,
 } from "../../scripts/misc/constants";
+import { ethers } from 'ethers';
 
 const E18n = 10n ** 18n;
 const E9n = 10n ** 9n;

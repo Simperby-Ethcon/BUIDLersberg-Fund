@@ -5,3 +5,6 @@
 src/.DS_Store
 src/simperby-evm/client/target
 src/simperby-evm/settlement/target
+src/simperby-evm/contract/node_modules
+src/simperby-evm/contract/cache
+src/simperby-evm/contract/artifacts

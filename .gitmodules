@@ -1,0 +1,9 @@
+[submodule "src/simperby-evm/contract/lib/openzeppelin-contracts-05"]
+	path = src/simperby-evm/contract/lib/openzeppelin-contracts-05
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "src/simperby-evm/contract/lib/openzeppelin-contracts-06"]
+	path = src/simperby-evm/contract/lib/openzeppelin-contracts-06
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "src/simperby-evm/contract/lib/openzeppelin-contracts-08"]
+	path = src/simperby-evm/contract/lib/openzeppelin-contracts-08
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
