@@ -73,5 +73,6 @@ To illustrate, consider any events where acquiring opUSDC posed challenges. Howe
 ```
 GITHUB_TOKEN='';
 GIT_LOCAL_PATH=/Users/sigridjineth/Documents/simperby-miscs
+TEST_MNEMONIC='';
 ```
 4. Run `main.rs` to wake up the relayer & light client

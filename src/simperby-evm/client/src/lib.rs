@@ -278,8 +278,7 @@ impl SettlementChain for EvmCompatibleChain {
         };
         let provider = Provider::<Http>::try_from(self.chain.get_rpc_url())?;
         let chain_id = provider.get_chainid().await.unwrap().as_u64();
-        // let mnemonic = dotenv!("RELAYER_MNEMONIC");
-        let test_mnemonic: &str = "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
+        let test_mnemonic: &str = std::env::var("TEST_MNEMONIC").expect("GIT_LOCAL_PATH not set").as_str();
         let wallet: LocalWallet = MnemonicBuilder::<English>::default()
             .phrase(test_mnemonic)
             .build()
