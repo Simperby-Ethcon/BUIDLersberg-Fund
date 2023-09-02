@@ -8,7 +8,7 @@ use simperby_evm_client::{ChainType, EvmCompatibleAddress};
 use crate::lightclient::*;
 
 // The relayer will manage a list of light clients.
-struct Relayer {
+pub struct Relayer {
     light_clients: Vec<MythereumTreasuryContract>,
     client: reqwest::Client,
     token: String,
@@ -56,7 +56,7 @@ impl Relayer {
                 Ok(response) => {
                     println!("{:#?}", response.status());
 
-                    if let Ok(commit_data) = response.json().await {
+                    if let Ok(commit_data) = response.json::<Value>().await {
                         if let Some(files) = commit_data.get("files") {
                             println!("Files changed in latest commit: {:#?}", files);
                         }
@@ -75,10 +75,10 @@ impl Relayer {
         Ok(())
     }
 
-    pub fn execute(&mut self, transaction: Transaction, height: BlockHeight, proof: MerkleProof) -> Result<(), String> {
+    pub async fn execute(&mut self, transaction: Transaction, height: BlockHeight, proof: MerkleProof) -> Result<(), String> {
         // For now, executing on the first client. Depending on your logic, you might want to iterate over all clients or choose a specific one.
         if let Some(client) = self.light_clients.first_mut() {
-            client.execute(transaction, height, proof)
+            client.execute(transaction, height, proof).await
         } else {
             Err("No client initialized.".to_string())
         }
@@ -104,32 +104,4 @@ impl Relayer {
             sleep(Duration::from_secs(5)).await;
         }
     }
-}
-
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let token = "";
-    let url = "https://api.github.com/repos/Simperby-Ethcon/dev-chain/commits";
-
-    let mut relayer = Relayer::new(token, url);
-
-    // Initialize a light client as an example. You should replace placeholders with actual values.
-    let header = BlockHeader {
-        author: (),
-        prev_block_finalization_proof: FinalizationProof {},
-        previous_hash: Hash256 {},
-        height: 0,
-        timestamp: 0,
-        commit_merkle_root: Hash256 {},
-        repository_merkle_root: Hash256 {},
-        validator_set: vec![],
-        version: "".to_string(),
-    }; // Placeholder
-    let chain = ChainType::YourVariantHere; // Placeholder
-    let address = Some(EvmCompatibleAddress {}); // Placeholder
-    relayer.initialize_light_client(header, chain, address)?;
-
-    relayer.run().await;
-
-    Ok(())
 }

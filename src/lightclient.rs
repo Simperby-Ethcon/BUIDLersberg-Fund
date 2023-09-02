@@ -2,14 +2,55 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use simperby_core::{BlockHeader, BlockHeight, FinalizationProof, Hash256, HexSerializedVec, light_client, serde_spb, Transaction};
-use rust_decimal::Decimal;
-use simperby_core::merkle_tree::MerkleProof;
-use serde::{Deserialize, Serialize};
-use simperby_evm_client::{ChainType, EvmCompatibleAddress, EvmCompatibleChain};
-use crate::util::string_to_hex;
-use simperby_settlement::SettlementChain;
+pub use simperby_core::{BlockHeader, BlockHeight, FinalizationProof, Hash256, HexSerializedVec, light_client, serde_spb, Transaction};
+pub use rust_decimal::Decimal;
+pub use simperby_core::merkle_tree::MerkleProof;
+pub use serde::{Deserialize, Serialize};
+pub use simperby_evm_client::{ChainType, EvmCompatibleAddress, EvmCompatibleChain};
+pub use simperby_settlement::SettlementChain;
 
+
+pub struct LightClient {
+    treasury_contract: MythereumTreasuryContract,
+    // global_context: GlobalContext,
+}
+
+impl LightClient {
+    pub fn new(block_header: BlockHeader, chain_type: ChainType, evm_compatible_address: EvmCompatibleAddress) -> Result<Self, String> {
+        let treasury_contract = MythereumTreasuryContract::new(block_header, chain_type, Some(evm_compatible_address))?;
+
+        // let tether = TetherContract {
+        //     balances: HashMap::new(),
+        // };
+        //
+        // let global_context = GlobalContext {
+        //     tether: Rc::new(RefCell::new(tether)),
+        //     caller: string_to_hex("default-caller"),
+        // };
+
+        Ok(Self {
+            treasury_contract,
+            // global_context,
+        })
+    }
+
+    pub fn update_light_client(
+        &mut self,
+        header: BlockHeader,
+        proof: FinalizationProof
+    ) -> Result<(), String> {
+        self.treasury_contract.update_light_client(header, proof)
+    }
+
+    pub async fn execute_transaction(
+        &mut self,
+        execution_transaction: Transaction,
+        simperby_height: BlockHeight,
+        proof: MerkleProof,
+    ) -> Result<(), String> {
+        self.treasury_contract.execute(execution_transaction, simperby_height, proof).await
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct Execution {
