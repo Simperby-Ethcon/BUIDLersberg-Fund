@@ -247,7 +247,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Fetch the GitHub token from environment variables for security reasons
     let token = std::env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN not set");
     let github = "https://api.github.com/repos/Simperby-Ethcon/dev-chain/commits";
-    let git_local_path = std::env::var("GIT_LOCAL_PATH").expect("GIT_LOCAL_PATH not set").as_str();
+    let git_local_path_string = std::env::var("GIT_LOCAL_PATH").expect("GIT_LOCAL_PATH not set");
+    let git_local_path = git_local_path_string.as_str();
     let auth: Auth = read_config(&format!("{git_local_path}/.simperby/auth.json"))
         .await
         .unwrap();

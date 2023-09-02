@@ -208,13 +208,17 @@ impl SettlementChain for EvmCompatibleChain {
     async fn get_relayer_account_info(&self) -> Result<(HexSerializedVec, Decimal), Error> {
         let provider = Provider::<Http>::try_from(self.chain.get_rpc_url())?;
         let chain_id = provider.get_chainid().await.unwrap().as_u64();
-        let test_mnemonic: &str = "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
+        // let test_mnemonic: &str = "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
         // let mnemonic = dotenv!("RELAYER_MNEMONIC").to_string();
-        let wallet: LocalWallet = MnemonicBuilder::<English>::default()
-            .phrase(test_mnemonic)
-            .build()
-            .unwrap()
-            .with_chain_id(chain_id);
+        // let wallet: LocalWallet = MnemonicBuilder::<English>::default()
+        //     .phrase(test_mnemonic)
+        //     .build()
+        //     .unwrap()
+        //     .with_chain_id(chain_id);
+        let test_private_key_string = std::env::var("TEST_PRIVATE_KEY").expect("TEST_PRIVATE_KEY not set");
+        let test_private_key = test_private_key_string.as_str();
+        let wallet = test_private_key.parse::<LocalWallet>().unwrap().clone().with_chain_id(chain_id);
+
         let relayer_address: H160 = wallet.address();
         let provider = Provider::<Http>::try_from(self.chain.get_rpc_url())?;
         let balance = provider
@@ -278,12 +282,16 @@ impl SettlementChain for EvmCompatibleChain {
         };
         let provider = Provider::<Http>::try_from(self.chain.get_rpc_url())?;
         let chain_id = provider.get_chainid().await.unwrap().as_u64();
-        let test_mnemonic: &str = std::env::var("TEST_MNEMONIC").expect("GIT_LOCAL_PATH not set").as_str();
-        let wallet: LocalWallet = MnemonicBuilder::<English>::default()
-            .phrase(test_mnemonic)
-            .build()
-            .unwrap()
-            .with_chain_id(chain_id);
+        // let test_mnemonic: &str = std::env::var("TEST_MNEMONIC").expect("GIT_LOCAL_PATH not set").as_str();
+        // let wallet: LocalWallet = MnemonicBuilder::<English>::default()
+        //     .phrase(test_mnemonic)
+        //     .build()
+        //     .unwrap()
+        //     .with_chain_id(chain_id);
+        let test_private_key_string = std::env::var("TEST_PRIVATE_KEY").expect("TEST_PRIVATE_KEY not set");
+        let test_private_key = test_private_key_string.as_str();
+        let wallet = test_private_key.parse::<LocalWallet>().unwrap().clone().with_chain_id(chain_id);
+
         let client = SignerMiddleware::new(&provider, wallet);
         let contract = ITreasury::new(treasury.address, Arc::new(client));
         let header = Bytes::from(
