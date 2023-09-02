@@ -4,17 +4,17 @@ mod util;
 
 use simperby::types::{Auth, Config};
 
-use serde_json::Value;
-use relayer::Relayer;
-use simperby_core::*;
 use lightclient::BlockHeader;
+use relayer::Relayer;
+use serde_json::Value;
+use simperby_core::*;
 use simperby_evm_client::{ChainConfigs, ChainType, EvmCompatibleAddress};
 
-use std::error::Error;
-use std::fmt;
-use reqwest::Client;
 use crate::relayer::CommitMessageType;
 use crate::util::read_config;
+use reqwest::Client;
+use std::error::Error;
+use std::fmt;
 
 #[derive(Debug)]
 pub enum BlockHeaderError {
@@ -42,10 +42,16 @@ impl Clone for BlockHeaderError {
     fn clone(&self) -> Self {
         match self {
             BlockHeaderError::DecodeError(e) => BlockHeaderError::DecodeError(e.clone()),
-            BlockHeaderError::JsonError(_) => BlockHeaderError::JsonError(serde_json::from_str::<serde_json::Value>("").unwrap_err()),
-            BlockHeaderError::UnexpectedPublicKeyLength => BlockHeaderError::UnexpectedPublicKeyLength,
+            BlockHeaderError::JsonError(_) => BlockHeaderError::JsonError(
+                serde_json::from_str::<serde_json::Value>("").unwrap_err(),
+            ),
+            BlockHeaderError::UnexpectedPublicKeyLength => {
+                BlockHeaderError::UnexpectedPublicKeyLength
+            }
             BlockHeaderError::UnexpectedHash256Length => BlockHeaderError::UnexpectedHash256Length,
-            BlockHeaderError::UnexpectedValidatorSetItemLength => BlockHeaderError::UnexpectedValidatorSetItemLength,
+            BlockHeaderError::UnexpectedValidatorSetItemLength => {
+                BlockHeaderError::UnexpectedValidatorSetItemLength
+            }
             BlockHeaderError::ValueMismatch(e) => BlockHeaderError::ValueMismatch(e),
         }
     }
@@ -58,14 +64,19 @@ impl fmt::Display for BlockHeaderError {
         match *self {
             BlockHeaderError::DecodeError(ref e) => write!(f, "DecodeError: {}", e),
             BlockHeaderError::JsonError(ref e) => write!(f, "JsonError: {}", e),
-            BlockHeaderError::UnexpectedPublicKeyLength => write!(f, "Unexpected length for PublicKey bytes"),
-            BlockHeaderError::UnexpectedHash256Length => write!(f, "Unexpected length for Hash256 bytes"),
-            BlockHeaderError::UnexpectedValidatorSetItemLength => write!(f, "Unexpected length for validator_set item"),
+            BlockHeaderError::UnexpectedPublicKeyLength => {
+                write!(f, "Unexpected length for PublicKey bytes")
+            }
+            BlockHeaderError::UnexpectedHash256Length => {
+                write!(f, "Unexpected length for Hash256 bytes")
+            }
+            BlockHeaderError::UnexpectedValidatorSetItemLength => {
+                write!(f, "Unexpected length for validator_set item")
+            }
             BlockHeaderError::ValueMismatch(ref s) => write!(f, "ValueMismatch: {}", s),
         }
     }
 }
-
 
 fn extract_block_header(commit_data: &Value) -> Result<BlockHeader, BlockHeaderError> {
     println!("commit_data: {:?}", commit_data);
@@ -87,19 +98,25 @@ fn extract_block_header(commit_data: &Value) -> Result<BlockHeader, BlockHeaderE
             33 => {
                 let mut array = [0; 33];
                 array.copy_from_slice(&author_bytes);
-                PublicKey::from_array(array).map_err(|_| BlockHeaderError::UnexpectedPublicKeyLength)?
-            },
+                PublicKey::from_array(array)
+                    .map_err(|_| BlockHeaderError::UnexpectedPublicKeyLength)?
+            }
             65 => {
                 let mut array = [0; 65];
                 array.copy_from_slice(&author_bytes);
-                PublicKey::from_array_uncompressed(array).map_err(|_| BlockHeaderError::UnexpectedPublicKeyLength)?
-            },
+                PublicKey::from_array_uncompressed(array)
+                    .map_err(|_| BlockHeaderError::UnexpectedPublicKeyLength)?
+            }
             _ => return Err(BlockHeaderError::UnexpectedPublicKeyLength),
         };
     }
 
-    if let Some(Value::Object(prev_block_finalization_proof)) = commit_data.get("prev_block_finalization_proof") {
-        finalization_proof = Some(serde_json::from_value(Value::Object(prev_block_finalization_proof.clone()))?);
+    if let Some(Value::Object(prev_block_finalization_proof)) =
+        commit_data.get("prev_block_finalization_proof")
+    {
+        finalization_proof = Some(serde_json::from_value(Value::Object(
+            prev_block_finalization_proof.clone(),
+        ))?);
     }
 
     if let Some(Value::String(previous_hash_hex)) = commit_data.get("previous_hash") {
@@ -108,20 +125,26 @@ fn extract_block_header(commit_data: &Value) -> Result<BlockHeader, BlockHeaderE
         if previous_hash_bytes.len() == 32 {
             let mut array = [0; 32];
             array.copy_from_slice(&previous_hash_bytes);
-            previous_hash = Some(Hash256 { hash: HexSerializedBytes { data: array } });
+            previous_hash = Some(Hash256 {
+                hash: HexSerializedBytes { data: array },
+            });
         } else {
             return Err(BlockHeaderError::UnexpectedHash256Length);
         }
     }
 
     if let Some(Value::Number(height)) = commit_data.get("height") {
-        block_height = height.as_u64().ok_or(BlockHeaderError::ValueMismatch("height"))?;
+        block_height = height
+            .as_u64()
+            .ok_or(BlockHeaderError::ValueMismatch("height"))?;
     } else {
         return Err(BlockHeaderError::ValueMismatch("height"));
     }
 
     if let Some(Value::Number(ts)) = commit_data.get("timestamp") {
-        timestamp = ts.as_i64().ok_or(BlockHeaderError::ValueMismatch("timestamp"))?;
+        timestamp = ts
+            .as_i64()
+            .ok_or(BlockHeaderError::ValueMismatch("timestamp"))?;
     } else {
         return Err(BlockHeaderError::ValueMismatch("timestamp"));
     }
@@ -132,7 +155,9 @@ fn extract_block_header(commit_data: &Value) -> Result<BlockHeader, BlockHeaderE
         if commit_merkle_root_bytes.len() == 32 {
             let mut array = [0; 32];
             array.copy_from_slice(&commit_merkle_root_bytes);
-            commit_merkle_root = Some(Hash256 { hash: HexSerializedBytes { data: array } });
+            commit_merkle_root = Some(Hash256 {
+                hash: HexSerializedBytes { data: array },
+            });
         } else {
             return Err(BlockHeaderError::UnexpectedHash256Length);
         }
@@ -140,13 +165,17 @@ fn extract_block_header(commit_data: &Value) -> Result<BlockHeader, BlockHeaderE
         return Err(BlockHeaderError::ValueMismatch("commit_merkle_root"));
     }
 
-    if let Some(Value::String(repository_merkle_root_hex)) = commit_data.get("repository_merkle_root") {
+    if let Some(Value::String(repository_merkle_root_hex)) =
+        commit_data.get("repository_merkle_root")
+    {
         let repository_merkle_root_bytes = hex::decode(repository_merkle_root_hex)?;
 
         if repository_merkle_root_bytes.len() == 32 {
             let mut array = [0; 32];
             array.copy_from_slice(&repository_merkle_root_bytes);
-            repository_merkle_root = Some(Hash256 { hash: HexSerializedBytes { data: array } });
+            repository_merkle_root = Some(Hash256 {
+                hash: HexSerializedBytes { data: array },
+            });
         } else {
             return Err(BlockHeaderError::UnexpectedHash256Length);
         }
@@ -155,31 +184,36 @@ fn extract_block_header(commit_data: &Value) -> Result<BlockHeader, BlockHeaderE
     }
 
     if let Value::Array(validator_set_array) = &commit_data["validator_set"] {
-
         for item in validator_set_array.iter() {
             if let Value::Array(item_array) = item {
                 if item_array.len() != 2 {
                     return Err(BlockHeaderError::UnexpectedValidatorSetItemLength);
                 }
 
-                let public_key_hex = item_array[0].as_str().ok_or(BlockHeaderError::ValueMismatch("public_key"))?;
+                let public_key_hex = item_array[0]
+                    .as_str()
+                    .ok_or(BlockHeaderError::ValueMismatch("public_key"))?;
                 let public_key_bytes = hex::decode(public_key_hex)?;
 
                 let public_key = match public_key_bytes.len() {
                     33 => {
                         let mut array = [0; 33];
                         array.copy_from_slice(&public_key_bytes);
-                        PublicKey::from_array(array).map_err(|_| BlockHeaderError::UnexpectedPublicKeyLength)?
-                    },
+                        PublicKey::from_array(array)
+                            .map_err(|_| BlockHeaderError::UnexpectedPublicKeyLength)?
+                    }
                     65 => {
                         let mut array = [0; 65];
                         array.copy_from_slice(&public_key_bytes);
-                        PublicKey::from_array_uncompressed(array).map_err(|_| BlockHeaderError::UnexpectedPublicKeyLength)?
-                    },
+                        PublicKey::from_array_uncompressed(array)
+                            .map_err(|_| BlockHeaderError::UnexpectedPublicKeyLength)?
+                    }
                     _ => return Err(BlockHeaderError::UnexpectedPublicKeyLength),
                 };
 
-                let voting_power: VotingPower = item_array[1].as_u64().ok_or(BlockHeaderError::ValueMismatch("voting_power"))?;
+                let voting_power: VotingPower = item_array[1]
+                    .as_u64()
+                    .ok_or(BlockHeaderError::ValueMismatch("voting_power"))?;
                 validator_set.push((public_key, voting_power));
             } else {
                 return Err(BlockHeaderError::ValueMismatch("validator_set_item"));
@@ -213,11 +247,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Fetch the GitHub token from environment variables for security reasons
     let token = std::env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN not set");
     let github = "https://api.github.com/repos/Simperby-Ethcon/dev-chain/commits";
-    let git_local_path = "/Users/sigridjineth/Documents/simperby-miscs";
+    let git_local_path = std::env::var("GIT_LOCAL_PATH").expect("GIT_LOCAL_PATH not set");
     let auth: Auth = read_config(&format!("{git_local_path}/.simperby/auth.json"))
         .await
         .unwrap();
-    let simperby_client = simperby::Client::open(git_local_path, Config {}, auth.clone()).await.unwrap();
+    let simperby_client = simperby::Client::open(git_local_path, Config {}, auth.clone())
+        .await
+        .unwrap();
 
     let mut relayer = Relayer::new(&token, &github, simperby_client);
 
@@ -245,18 +281,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                 let address = Some(EvmCompatibleAddress {
                     // TODO: fix the hardcoded contract address
-                    address: "0x5FbDB2315678afecb367f032d93F642f64180aa3".to_string().parse().unwrap(),
+                    address: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+                        .to_string()
+                        .parse()
+                        .unwrap(),
                 });
 
                 relayer.set_block_height(header.clone().height);
-                relayer.initialize_light_client(header.clone(), chain, address, header.clone().height)?;
+                relayer.initialize_light_client(
+                    header.clone(),
+                    chain,
+                    address,
+                    header.clone().height,
+                )?;
 
-                break;  // Exit the loop once the block commit is found and processed.
-            },
+                break; // Exit the loop once the block commit is found and processed.
+            }
             Ok(CommitMessageType::Transaction(transaction)) => {
                 println!("Transaction commit: {:#?}", transaction);
                 // Note: Continue the loop to look for the block commit.
-            },
+            }
             _ => {
                 println!("Unrecognized or unknown commit format.");
                 // Note: Continue the loop to look for the block commit.

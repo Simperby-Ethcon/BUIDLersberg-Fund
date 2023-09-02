@@ -1,14 +1,16 @@
 // Imports
+pub use rust_decimal::Decimal;
+pub use serde::{Deserialize, Serialize};
+pub use simperby_core::merkle_tree::MerkleProof;
+pub use simperby_core::{
+    light_client, serde_spb, BlockHeader, BlockHeight, FinalizationProof, Hash256,
+    HexSerializedVec, Transaction,
+};
+pub use simperby_evm_client::{ChainType, EvmCompatibleAddress, EvmCompatibleChain};
+pub use simperby_settlement::SettlementChain;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-pub use simperby_core::{BlockHeader, BlockHeight, FinalizationProof, Hash256, HexSerializedVec, light_client, serde_spb, Transaction};
-pub use rust_decimal::Decimal;
-pub use simperby_core::merkle_tree::MerkleProof;
-pub use serde::{Deserialize, Serialize};
-pub use simperby_evm_client::{ChainType, EvmCompatibleAddress, EvmCompatibleChain};
-pub use simperby_settlement::SettlementChain;
-
 
 pub struct LightClient {
     treasury_contract: TreasuryContract,
@@ -16,8 +18,17 @@ pub struct LightClient {
 }
 
 impl LightClient {
-    pub fn new(block_header: BlockHeader, chain_type: ChainType, evm_compatible_address: EvmCompatibleAddress) -> Result<Self, String> {
-        let treasury_contract = TreasuryContract::new(block_header.clone(), chain_type, Some(evm_compatible_address), block_header.height.clone())?;
+    pub fn new(
+        block_header: BlockHeader,
+        chain_type: ChainType,
+        evm_compatible_address: EvmCompatibleAddress,
+    ) -> Result<Self, String> {
+        let treasury_contract = TreasuryContract::new(
+            block_header.clone(),
+            chain_type,
+            Some(evm_compatible_address),
+            block_header.height.clone(),
+        )?;
 
         // let tether = TetherContract {
         //     balances: HashMap::new(),
@@ -37,7 +48,7 @@ impl LightClient {
     pub fn update_light_client(
         &mut self,
         header: BlockHeader,
-        proof: FinalizationProof
+        proof: FinalizationProof,
     ) -> Result<(), String> {
         self.treasury_contract.update_light_client(header, proof)
     }
@@ -48,7 +59,9 @@ impl LightClient {
         simperby_height: BlockHeight,
         proof: MerkleProof,
     ) -> Result<(), String> {
-        self.treasury_contract.execute(execution_transaction, simperby_height, proof).await
+        self.treasury_contract
+            .execute(execution_transaction, simperby_height, proof)
+            .await
     }
 }
 
@@ -190,11 +203,19 @@ pub struct TreasuryContract {
 }
 
 impl TreasuryContract {
-    pub fn new(header: BlockHeader, chain: ChainType, treasury_address: Option<EvmCompatibleAddress>, block_height: BlockHeight) -> Result<Self, String> {
+    pub fn new(
+        header: BlockHeader,
+        chain: ChainType,
+        treasury_address: Option<EvmCompatibleAddress>,
+        block_height: BlockHeight,
+    ) -> Result<Self, String> {
         Ok(Self {
             light_client: light_client::LightClient::new(header),
             sequence: 0,
-            evm_chain: EvmCompatibleChain { chain, treasury_address },
+            evm_chain: EvmCompatibleChain {
+                chain,
+                treasury_address,
+            },
             block_height,
         })
     }
@@ -235,7 +256,10 @@ impl TreasuryContract {
 
         // self.execute(execution, simperby_height, proof).await
 
-        let result = self.evm_chain.execute(execution_transaction, simperby_height, proof.clone()).await;
+        let result = self
+            .evm_chain
+            .execute(execution_transaction, simperby_height, proof.clone())
+            .await;
         dbg!(&result);
 
         // match execution.message {

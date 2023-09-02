@@ -1,4 +1,4 @@
-use simperby_core::{HexSerializedVec, serde_spb};
+use simperby_core::{serde_spb, HexSerializedVec};
 
 pub fn string_to_hex(s: &str) -> HexSerializedVec {
     HexSerializedVec::from(s.as_bytes().to_vec())
