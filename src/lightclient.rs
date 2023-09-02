@@ -1,8 +1,3 @@
-//! An example of a settlement chain (Mythereum) abstracted in plain Rust code.
-//!
-//! This lightclient.rs is designed to use the settlement chain in the context of simperby-evm's code.
-
-
 // Imports
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -104,47 +99,47 @@ pub struct TransferNonFungibleToken {
     pub receiver_address: HexSerializedVec,
 }
 
-pub struct TetherContract {
-    pub(crate) balances: HashMap<HexSerializedVec, Decimal>,
-}
+// pub struct TetherContract {
+//     pub(crate) balances: HashMap<HexSerializedVec, Decimal>,
+// }
 
-pub trait MRC20 {
-    fn get_balance(&self, address: &HexSerializedVec) -> Decimal;
-    fn transfer(
-        &mut self,
-        context: &mut GlobalContext,
-        to: &HexSerializedVec,
-        amount: Decimal,
-    ) -> bool;
-}
+// pub trait MRC20 {
+//     fn get_balance(&self, address: &HexSerializedVec) -> Decimal;
+//     fn transfer(
+//         &mut self,
+//         // context: &mut GlobalContext,
+//         to: &HexSerializedVec,
+//         amount: Decimal,
+//     ) -> bool;
+// }
+//
+// impl MRC20 for TetherContract {
+//     fn get_balance(&self, address: &HexSerializedVec) -> Decimal {
+//         *self.balances.get(address).unwrap_or(&Decimal::ZERO)
+//     }
+//
+//     fn transfer(
+//         &mut self,
+//         // context: &mut GlobalContext,
+//         to: &HexSerializedVec,
+//         amount: Decimal,
+//     ) -> bool {
+//         let from_balance = self.get_balance(&context.caller);
+//         if from_balance < amount {
+//             return false;
+//         }
+//         let to_balance = self.get_balance(to);
+//         self.balances
+//             .insert(context.caller.clone(), from_balance - amount);
+//         self.balances.insert(to.clone(), to_balance + amount);
+//         true
+//     }
+// }
 
-impl MRC20 for TetherContract {
-    fn get_balance(&self, address: &HexSerializedVec) -> Decimal {
-        *self.balances.get(address).unwrap_or(&Decimal::ZERO)
-    }
-
-    fn transfer(
-        &mut self,
-        context: &mut GlobalContext,
-        to: &HexSerializedVec,
-        amount: Decimal,
-    ) -> bool {
-        let from_balance = self.get_balance(&context.caller);
-        if from_balance < amount {
-            return false;
-        }
-        let to_balance = self.get_balance(to);
-        self.balances
-            .insert(context.caller.clone(), from_balance - amount);
-        self.balances.insert(to.clone(), to_balance + amount);
-        true
-    }
-}
-
-pub struct GlobalContext {
-    pub tether: Rc<RefCell<TetherContract>>,
-    pub caller: HexSerializedVec,
-}
+// pub struct GlobalContext {
+//     pub tether: Rc<RefCell<TetherContract>>,
+//     pub caller: HexSerializedVec,
+// }
 
 pub struct MythereumTreasuryContract {
     light_client: light_client::LightClient,
@@ -163,7 +158,7 @@ impl MythereumTreasuryContract {
 
     pub fn update_light_client(
         &mut self,
-        _context: &mut GlobalContext,
+        // _context: &mut GlobalContext,
         header: BlockHeader,
         proof: FinalizationProof,
     ) -> Result<(), String> {
@@ -172,7 +167,7 @@ impl MythereumTreasuryContract {
 
     pub async fn execute(
         &mut self,
-        context: &mut GlobalContext,
+        // context: &mut GlobalContext,
         execution_transaction: Transaction,
         simperby_height: BlockHeight,
         proof: MerkleProof,
@@ -181,9 +176,9 @@ impl MythereumTreasuryContract {
         if execution.contract_sequence != self.sequence {
             return Err("Invalid sequence".to_string());
         }
-        if execution.target_chain != "mythereum" {
-            return Err("Invalid target chain".to_string());
-        }
+        // if execution.target_chain != "mythereum" {
+        //     return Err("Invalid target chain".to_string());
+        // }
 
         if !self.light_client.verify_transaction_commitment(
             &execution_transaction,
@@ -193,28 +188,29 @@ impl MythereumTreasuryContract {
             return Err("Invalid proof".to_string());
         }
 
-        match execution.message {
-            ExecutionMessage::Dummy { msg } => {
-                unimplemented!("Should emit an event with the message ({})", msg)
-            }
-            ExecutionMessage::TransferFungibleToken(TransferFungibleToken {
-                                                        token_address,
-                                                        amount,
-                                                        receiver_address,
-                                                    }) => {
-                // if token_address != string_to_hex("tether-address") {
-                //     unimplemented!()
-                // }
-                // let tether_rc = Rc::clone(&context.tether);
-                // let mut tether = tether_rc.borrow_mut();
-                // context.caller = string_to_hex("treasury-address");
-                // if !tether.transfer(context, &receiver_address, amount) {
-                //     return Err("Insufficient balance".to_string());
-                // }
-                self.evm_chain.execute(execution_transaction, simperby_height, proof.clone());
-            }
-            ExecutionMessage::TransferNonFungibleToken(_) => todo!(),
-        }
+        self.evm_chain.execute(execution_transaction, simperby_height, proof.clone());
+
+        // match execution.message {
+        //     ExecutionMessage::Dummy { msg } => {
+        //         unimplemented!("Should emit an event with the message ({})", msg)
+        //     }
+        //     ExecutionMessage::TransferFungibleToken(TransferFungibleToken {
+        //                                                 token_address,
+        //                                                 amount,
+        //                                                 receiver_address,
+        //                                             }) => {
+        //         // if token_address != string_to_hex("tether-address") {
+        //         //     unimplemented!()
+        //         // }
+        //         // let tether_rc = Rc::clone(&context.tether);
+        //         // let mut tether = tether_rc.borrow_mut();
+        //         // context.caller = string_to_hex("treasury-address");
+        //         // if !tether.transfer(context, &receiver_address, amount) {
+        //         //     return Err("Insufficient balance".to_string());
+        //         // }
+        //     }
+        //     ExecutionMessage::TransferNonFungibleToken(_) => todo!(),
+        // }
 
         self.sequence += 1;
         Ok(())
