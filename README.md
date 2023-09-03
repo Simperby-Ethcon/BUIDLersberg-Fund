@@ -35,22 +35,22 @@ The protocol helps LP decision confidentiality with decentralized governance. Ke
 ### Supported Chains & DEX
 
 **Linea Testnet**
-- EVM Treasury of Ethereum: `0x7B5727Ca11432A5c8150C45291EE34225B674A1`
-- ERC20 Token:
+- EVM Treasury
+- ERC20 Token
 - ERC721Mock
 - Uniswap (Soon)
 
 **Polygon Mumbai Testnet**
 - ERC20Mock
-- EVM Treasury of Ethereum: `0x59c196D28996332dDFd355d811f3C1e8De892214`
-- ERC20 Token: `0x171fe153Be269a0A3749f31CC2fde344EE842468`
+- EVM Treasury `0x59c196D28996332dDFd355d811f3C1e8De892214`
+- ERC20 `0x171fe153Be269a0A3749f31CC2fde344EE842468`
 - ERC721Mock
 - Uniswap (Soon)
 
 **Taiko**
 - ERC20Mock
-- EVM Treasury of Ethereum: `0x337A02e1757E66084820E7c7bB6ef99c7bbf7D0C`
-- ERC20 Token: `0x73F79c61238CcF16b205b0a9EF55300e9244ff94`
+- EVM Treasury `0x337A02e1757E66084820E7c7bB6ef99c7bbf7D0C`
+- ERC20 `0x73F79c61238CcF16b205b0a9EF55300e9244ff94`
 - ERC721Mock
 - Uniswap (Soon)
 
