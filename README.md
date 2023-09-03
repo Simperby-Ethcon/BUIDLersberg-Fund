@@ -33,9 +33,29 @@ The protocol helps LP decision confidentiality with decentralized governance. Ke
 5. Actions, based on consensus, are carried out on the primary chains via our light clients and relayers.
 
 ### Supported Chains & DEX
-1. Linea Testnet - ERC20Mock (Now available), ERC721Mock, Uniswap (Soon)
-2. Polygon Testnet - ERC20Mock, ERC721Mock, Uniswap (Soon)
-3. dYdX Testnet (further planned)
+
+**Linea Testnet**
+- EVM Treasury of Ethereum: `0x7B5727Ca11432A5c8150C45291EE34225B674A1`
+- ERC20 Token:
+- ERC721Mock
+- Uniswap (Soon)
+
+**Polygon Mumbai Testnet**
+- ERC20Mock
+- EVM Treasury of Ethereum: `0x59c196D28996332dDFd355d811f3C1e8De892214`
+- ERC20 Token: `0x171fe153Be269a0A3749f31CC2fde344EE842468`
+- ERC721Mock
+- Uniswap (Soon)
+
+**Taiko**
+- ERC20Mock
+- EVM Treasury of Ethereum: `0x337A02e1757E66084820E7c7bB6ef99c7bbf7D0C`
+- ERC20 Token: `0x73F79c61238CcF16b205b0a9EF55300e9244ff94`
+- ERC721Mock
+- Uniswap (Soon)
+
+**dYdX Testnet**
+- (further planned)
 
 ### Practical Use Case
 Visualize a friend group pooling their resources to venture into various crypto projects. Instead of a singular decision-maker, they opt for a voting system, with each member's influence tied to their investment size.
